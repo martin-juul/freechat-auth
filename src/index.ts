@@ -2,11 +2,10 @@ import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import { Request, Response } from 'express';
 import { createConnection } from 'typeorm';
-import { AppRoutes } from './routes';
+import { AppRoutes, Route } from './routes';
 
 // create connection pool with postgres
 createConnection().then(async connection => {
-
     if (await connection.isConnected) {
         console.log('[server]: connected to database');
     }
@@ -16,16 +15,6 @@ createConnection().then(async connection => {
     // Express server config
     app.set('port', process.env.PORT || 3000);
 
-    // CORS
-    // TODO: Handle properly in controllers
-    app.all('/*', function (req, res, next) {
-        res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
-        res.header('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, X-FREECHAT-TOKEN, Access-Control-Allow-Origin');
-        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD');
-        res.header('Access-Control-Allow-Credentials', 'true');
-        next();
-    });
-
     // support application/json
     app.use(bodyParser.json());
     // support application/x-www-form-urlencoded
@@ -34,12 +23,20 @@ createConnection().then(async connection => {
     app.use(express.static('public'));
 
     // register routes
-    AppRoutes.forEach(route => {
-        app[ route.method ](route.path, (request: Request, response: Response, next: Function) => {
-            route.action(request, response)
-                .then(() => next)
-                .catch(err => next(err));
-        });
+    AppRoutes.forEach((route: Route) => {
+        if (route.middleware) {
+            app[ route.method ](route.path, route.middleware, (request: Request, response: Response, next: Function) => {
+                route.action(request, response)
+                    .then(() => next)
+                    .catch(err => next(err));
+            });
+        } else {
+            app[ route.method ](route.path, (request: Request, response: Response, next: Function) => {
+                route.action(request, response)
+                    .then(() => next)
+                    .catch(err => next(err));
+            });
+        }
     });
 
     // Start server
