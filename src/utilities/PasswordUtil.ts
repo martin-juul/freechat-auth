@@ -2,8 +2,12 @@ import * as argon2 from 'argon2';
 
 export class PasswordUtil
 {
-    static async verify(hashedPassword: string, password: string) {
-        return argon2.verify(hashedPassword, password);
+    static async verify(hashedPassword: string, plainPassword: string): Promise<boolean> {
+        try {
+            return await argon2.verify(hashedPassword, plainPassword)
+        } catch (err) {
+            return err;
+        }
     }
 
     static async hash(password: string): Promise<string> {
