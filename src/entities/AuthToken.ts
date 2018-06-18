@@ -1,5 +1,4 @@
 import { BaseEntity, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { IAuthToken } from './IAuthToken';
 import { User } from './User';
 
 @Entity()
@@ -13,4 +12,9 @@ export class AuthToken extends BaseEntity implements IAuthToken
 
     @ManyToOne(type => User, user => user.tokens)
     user: User;
+}
+
+export interface IAuthToken
+{
+    token: string;
 }

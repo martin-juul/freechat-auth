@@ -1,8 +1,8 @@
 import { EntityRepository, getConnection, getRepository, Repository } from 'typeorm';
 import * as argon2 from 'argon2';
-import { User } from '../entity/User';
-import { IUser } from '../entity/IUser';
-import { AuthToken } from '../entity/AuthToken';
+import { User } from '../entities/User';
+import { IUser } from '../entities/IUser';
+import { AuthToken } from '../entities/AuthToken';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User>

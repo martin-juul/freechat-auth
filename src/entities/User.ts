@@ -1,6 +1,5 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { IUser } from './IUser';
-import { AuthToken } from './AuthToken';
+import { AuthToken, IAuthToken } from './AuthToken';
 
 @Entity()
 export class User extends BaseEntity implements IUser
@@ -25,4 +24,15 @@ export class User extends BaseEntity implements IUser
 
     @OneToMany(type => AuthToken, token => token.user)
     tokens: AuthToken[]
+}
+
+export interface IUser
+{
+    id?: string;
+    username: string;
+    password: string;
+    email?: string;
+    avatar?: string;
+    tokens?: IAuthToken[]
+    token?: IAuthToken
 }

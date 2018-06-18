@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
+import { IUser } from '../entities/User';
 import { UserRepository } from '../repositories/UserRepository';
-import { IUser } from '../entity/IUser';
 
 export let signup = async (req: Request, res: Response) => {
     const connection = getConnection();

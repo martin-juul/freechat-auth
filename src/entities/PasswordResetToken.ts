@@ -1,5 +1,4 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
-import { IPasswordResetToken } from './IPasswordResetToken';
 import { User } from './User';
 
 @Entity()
@@ -20,4 +19,11 @@ export class PasswordResetToken extends BaseEntity implements IPasswordResetToke
 
     @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date;
+}
+
+export interface IPasswordResetToken
+{
+    user: User;
+    token: string;
+    expires: Date;
 }
