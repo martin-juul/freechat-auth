@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node ./src/server.ts",
+    "dev": "ts-node ./src/index.ts",
     "start": "nodemon ./build/server.ts",
     "prod": "npm run build && npm run start"
   }
