@@ -5,7 +5,7 @@
    "username": "freechat",
    "password": "2X6$Cqrj1QhpZFq%wfma",
    "database": "freechat",
-   "synchronize": true,
+   "synchronize": false,
    "logging": false,
    "entities": [
       "src/entity/**/*.ts"
