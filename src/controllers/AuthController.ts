@@ -18,14 +18,14 @@ export namespace AuthController
                         email: user.email,
                         avatar: user.avatar
                     };
-                    response.json(userResponse).sendStatus(201);
+                    response.status(201).json(userResponse);
                 })
                 .catch(err => {
-                    response.json(err).status(500);
+                    response.status(500).json(err);
                 });
 
         } catch (err) {
-            response.json(err).status(400);
+            response.status(400).json(err);
         }
     }
 
@@ -52,28 +52,32 @@ export namespace AuthController
         });
     }
 
-    export async function postValidateToken(req: Request, res: Response) {
+    export async function postValidateToken(request: Request, response: Response) {
         const connection = getConnection();
-        const userId = req.param('id');
-        const userToken = req.param('token');
+        const tokenRequest: ValidateTokenRequest = (<ValidateTokenRequest>request.body);
 
         await connection.transaction(async manager => {
             const userRepository = manager.getCustomRepository(UserRepository);
-            const isValid = userRepository.validateToken(userId, userToken);
+            const isValid = userRepository.validateToken(tokenRequest.id, tokenRequest.token);
 
             isValid.then(match => {
                 if (match) {
-                    res.json({
+                    response.json({
                         message: 'success'
                     });
                 } else {
-                    res.status(401);
+                    response.status(401);
                 }
             }).catch(err => {
                 console.error(err);
-                res.status(500);
+                response.status(500);
             });
         });
+    }
+
+    interface ValidateTokenRequest {
+        id: string;
+        token: string;
     }
 
 }
