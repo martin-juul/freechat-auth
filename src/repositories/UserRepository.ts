@@ -1,33 +1,16 @@
-import * as argon2 from 'argon2';
 import { EntityRepository, getConnection, Repository } from 'typeorm';
 import { AuthToken } from '../entities/AuthToken';
 import { IUser, User } from '../entities/User';
+import { PasswordUtil } from '../utilities/PasswordUtil';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User>
 {
-    static async hashPassword(password: string) {
-        try {
-            return await argon2.hash(password, {
-                type: argon2.argon2id
-            })
-        } catch (err) {
-            return err;
-        }
-    }
-
-    private static async getQueryRunner() {
-        const connection = getConnection();
-        const queryRunner = connection.createQueryRunner();
-
-        await queryRunner.connect();
-        return queryRunner;
-    }
 
     async createAndSave(user: IUser): Promise<User> {
         try {
             const queryRunner = await UserRepository.getQueryRunner();
-            const pass = await UserRepository.hashPassword(user.password);
+            const pass = await PasswordUtil.hash(user.password);
 
             let newUser: User = new User();
 
@@ -92,7 +75,7 @@ export class UserRepository extends Repository<User>
     async verifyPassword(username: string, password: string) {
         return new Promise((resolve, reject) => {
             return this.findOne({ username }).then((user) => {
-                argon2.verify(user.password, password).then((check) => {
+                PasswordUtil.verify(user.password, password).then((check) => {
                     resolve(check);
                 }).catch(err => {
                     reject(err);
@@ -111,5 +94,13 @@ export class UserRepository extends Repository<User>
                     reject(err);
                 });
         });
+    }
+
+    private static async getQueryRunner() {
+        const connection = getConnection();
+        const queryRunner = connection.createQueryRunner();
+
+        await queryRunner.connect();
+        return queryRunner;
     }
 }
