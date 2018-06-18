@@ -1,25 +1,31 @@
 import { Request, Response } from 'express';
-import { getConnection } from 'typeorm';
+import { getConnection, getCustomRepository } from 'typeorm';
 import { IUser } from '../entities/User';
 import { UserRepository } from '../repositories/UserRepository';
 
 export namespace AuthController
 {
-    export async function postSignUp(req: Request, res: Response) {
-        const connection = getConnection();
-
+    export async function postSignUp(request: Request, response: Response) {
         try {
-            const signUpRequest = <IUser> req.body;
+            const signUpRequest = (<IUser>request.body);
+            const userRepository = getCustomRepository(UserRepository);
 
-            await connection.transaction(async manager => {
-                const userRepository = manager.getCustomRepository(UserRepository);
-                await userRepository.createAndSave(signUpRequest);
-                const newUser = await userRepository.findByUsername(signUpRequest.username);
+            userRepository.createAndSave(signUpRequest)
+                .then(user => {
+                    const userResponse: IUser = {
+                        id: user.id,
+                        username: user.username,
+                        email: user.email,
+                        avatar: user.avatar
+                    };
+                    response.json(userResponse).sendStatus(201);
+                })
+                .catch(err => {
+                    response.json(err).status(500);
+                });
 
-                res.json(newUser);
-            });
         } catch (err) {
-            res.json(err).status(400);
+            response.json(err).status(400);
         }
     }
 

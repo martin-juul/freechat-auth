@@ -16,20 +16,37 @@ export class UserRepository extends Repository<User>
         }
     }
 
-    async createAndSave(user: IUser) {
+    private static async getQueryRunner() {
+        const connection = getConnection();
+        const queryRunner = connection.createQueryRunner();
+
+        await queryRunner.connect();
+        return queryRunner;
+    }
+
+    async createAndSave(user: IUser): Promise<User> {
         try {
+            const queryRunner = await UserRepository.getQueryRunner();
+            const pass = await UserRepository.hashPassword(user.password);
 
             let newUser: User = new User();
-            const pass = await UserRepository.hashPassword(user.password);
 
             newUser.username = user.username;
             newUser.password = await pass;
             newUser.email = user.email;
             newUser.avatar = user.avatar;
 
-            newUser = await this.manager.create(User, newUser);
+            await queryRunner.startTransaction();
+            try {
+                await queryRunner.manager.save(newUser);
+                await queryRunner.commitTransaction();
+            } catch (err) {
+                console.error('[UserRepository](createAndSave): ', err);
+                await queryRunner.rollbackTransaction();
+                return err;
+            }
 
-            return this.manager.save(newUser);
+            return await newUser;
         } catch (e) {
             return e;
         }
@@ -45,10 +62,7 @@ export class UserRepository extends Repository<User>
     }
 
     async createAuthToken(username: string) {
-        const connection = getConnection();
-        const queryRunner = connection.createQueryRunner();
-
-        await queryRunner.connect();
+        const queryRunner = await UserRepository.getQueryRunner();
 
         const user = await queryRunner.manager.findOne(User, { username: username });
         const token = new AuthToken();
@@ -97,13 +111,5 @@ export class UserRepository extends Repository<User>
                     reject(err);
                 });
         });
-    }
-}
-
-interface UserResponse extends User
-{
-    token: {
-        token: string,
-        createdAt: Date
     }
 }
