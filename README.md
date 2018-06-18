@@ -1,7 +1,21 @@
-# Awesome Project Build with TypeORM
-        
-Steps to run this project:
+# FreeChat Auth
 
-1. Run `npm i` command
-2. Setup database settings inside `ormconfig.json` file
-3. Run `npm start` command
+Authentication server for FreeChat.
+
+## Getting started
+
+Install dependencies
+
+`npm install`
+
+Source .bash_aliases (for typeorm support)
+
+`source .bash_aliases`
+
+Run migrations
+
+`runm`
+
+Run development env
+
+`npm run dev`
