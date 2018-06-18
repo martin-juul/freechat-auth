@@ -36,6 +36,10 @@ export class UserRepository extends Repository<User>
 
     }
 
+    async findById(id: string) {
+        return this.findOneOrFail({id: id});
+    }
+
     async findByUsername(username: string) {
         return this.findOne({ username });
     }

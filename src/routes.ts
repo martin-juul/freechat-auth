@@ -2,6 +2,7 @@ import * as cors from 'cors';
 import { CorsOptions } from 'cors';
 import { Request, Response } from 'express';
 import { AuthController } from './controllers/AuthController';
+import { UserController } from './controllers/UserController';
 
 export interface Route
 {
@@ -42,5 +43,11 @@ export const AppRoutes: Route[] = [
         middleware: cors(corsOptions),
         method: 'post',
         action: AuthController.postValidateToken
+    },
+    {
+        path: '/user',
+        middleware: cors(corsOptions),
+        method: 'post',
+        action: UserController.postGetUser
     }
 ];
