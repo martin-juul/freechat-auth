@@ -1,8 +1,7 @@
-import { EntityRepository, getConnection, getRepository, Repository } from 'typeorm';
 import * as argon2 from 'argon2';
-import { User } from '../entities/User';
-import { IUser } from '../entities/IUser';
+import { EntityRepository, getConnection, Repository } from 'typeorm';
 import { AuthToken } from '../entities/AuthToken';
+import { IUser, User } from '../entities/User';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User>
@@ -91,7 +90,7 @@ export class UserRepository extends Repository<User>
     async validateToken(userId: string, token: string) {
         return new Promise((resolve, reject) => {
             return this.manager
-                .findOneOrFail(AuthToken,{ where: { user: userId, token: token } })
+                .findOneOrFail(AuthToken, { where: { user: userId, token: token } })
                 .then(res => {
                     resolve(res);
                 }).catch(err => {
@@ -101,7 +100,8 @@ export class UserRepository extends Repository<User>
     }
 }
 
-interface UserResponse extends User {
+interface UserResponse extends User
+{
     token: {
         token: string,
         createdAt: Date
