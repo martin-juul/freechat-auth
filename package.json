@@ -4,6 +4,7 @@
   "description": ".",
   "devDependencies": {
     "@types/cors": "^2.8.4",
+    "@types/dotenv": "^4.0.3",
     "@types/node": "^8.0.29",
     "nodemon": "^1.17.5",
     "ts-node": "6.1.0",
@@ -15,10 +16,12 @@
     "argon2": "^0.19.3",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "pg": "^7.3.0",
     "reflect-metadata": "^0.1.10",
-    "typeorm": "0.2.7"
+    "typeorm": "0.2.7",
+    "winston": "^3.0.0"
   },
   "scripts": {
     "build": "tsc",

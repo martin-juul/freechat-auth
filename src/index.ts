@@ -1,8 +1,12 @@
 import * as bodyParser from 'body-parser';
+import * as dotenv from 'dotenv';
 import * as express from 'express';
 import { Request, Response } from 'express';
 import { createConnection } from 'typeorm';
 import { AppRoutes, Route } from './routes';
+
+// Load .env
+dotenv.config({ path: '.env' });
 
 // create connection pool with postgres
 createConnection().then(async connection => {
